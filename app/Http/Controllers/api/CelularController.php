@@ -129,10 +129,10 @@ class CelularController extends Controller
     {
         $modelos = Celular::where('activo', true)
             ->where('marca', $marca)
-            ->select('modelo')
+            ->select('id', 'modelo')
             ->distinct()
-            ->pluck('modelo');
-    
+            ->get();
+
         return response()->json([
             'data' => $modelos,
             'status' => 200
