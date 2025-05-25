@@ -172,7 +172,6 @@ class EstadisticasController extends Controller
             'ventas_fijo' => $ventasFijoMejor,
             'ventas_movil' => $ventasMovilMejor,
             'ventas_totales' => $maxVentas,
-            'message' => 'test'
         ]);
     }
 }
