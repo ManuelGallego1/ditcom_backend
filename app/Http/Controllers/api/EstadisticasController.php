@@ -128,24 +128,21 @@ class EstadisticasController extends Controller
 
     public function MejorVendedorGeneral()
     {
-        $startOfWeek = Carbon::now()->startOfWeek();
-        $endOfWeek = Carbon::now()->endOfWeek();
+        $startOfLastWeek = Carbon::now()->subWeek()->startOfWeek();
+        $endOfLastWeek = Carbon::now()->subWeek()->endOfWeek();
 
-        // Ventas por vendedor en Fijo
-        $ventasFijo = Fijo::whereBetween('fecha_instalacion', [$startOfWeek, $endOfWeek])
+        $ventasFijo = Fijo::whereBetween('fecha_instalacion', [$startOfLastWeek, $endOfLastWeek])
             ->select('vendedor_id', \DB::raw('count(*) as total'))
             ->groupBy('vendedor_id')
             ->get()
             ->keyBy('vendedor_id');
 
-        // Ventas por vendedor en Movil
-        $ventasMovil = Movil::whereBetween('updated_at', [$startOfWeek, $endOfWeek])
+        $ventasMovil = Movil::whereBetween('updated_at', [$startOfLastWeek, $endOfLastWeek])
             ->select('vendedor_id', \DB::raw('count(*) as total'))
             ->groupBy('vendedor_id')
             ->get()
             ->keyBy('vendedor_id');
 
-        // Sumar ventas de ambos
         $totales = [];
         foreach ($ventasFijo as $vendedor_id => $fijo) {
             $totales[$vendedor_id] = $fijo->total + ($ventasMovil[$vendedor_id]->total ?? 0);
@@ -175,6 +172,7 @@ class EstadisticasController extends Controller
             'ventas_fijo' => $ventasFijoMejor,
             'ventas_movil' => $ventasMovilMejor,
             'ventas_totales' => $maxVentas,
+            'message' => 'test'
         ]);
     }
 }
