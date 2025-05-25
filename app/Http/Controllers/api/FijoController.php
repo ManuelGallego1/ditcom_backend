@@ -157,4 +157,43 @@ class FijoController extends Controller
 
         return Excel::download(new FijosExport($fijos), $fileName);
     }
+
+    public function getStatistics(Request $request)
+    {
+        $query = Fijo::query();
+
+        if ($request->filled('vendedor_id')) {
+            $query->where('vendedor_id', $request->vendedor_id);
+        }
+
+        if ($request->filled('sede_id')) {
+            $query->where('sede_id', $request->sede_id);
+        }
+
+        if ($request->boolean('ventas_pyme')) {
+            $query->where('tipo_producto', 'pyme');
+        }
+
+        if ($request->filled('coordinador_id')) {
+            $query->whereHas('sede', function ($q) use ($request) {
+                $q->where('coordinador_id', $request->coordinador_id);
+            });
+        }
+
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $startDate = Carbon::parse($request->input('start_date'))->startOfDay();
+            $endDate = Carbon::parse($request->input('end_date'))->endOfDay();
+            $query->whereBetween('fecha_instalacion', [$startDate, $endDate]);
+        }
+
+        $baseQuery = clone $query;
+
+        $stats = [
+            'total' => $baseQuery->count(),
+            'pyme' => (clone $baseQuery)->where('tipo_producto', 'pyme')->count(),
+            'residencial' => (clone $baseQuery)->where('tipo_producto', 'residencial')->count(),
+        ];
+
+        return response()->json($stats, 200);
+    }
 }

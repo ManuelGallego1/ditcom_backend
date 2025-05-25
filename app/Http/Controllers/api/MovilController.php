@@ -171,4 +171,45 @@ class MovilController extends Controller
 
         return Excel::download(new MovilesExport($moviles), $fileName);
     }
+
+    public function getStatistics(Request $request)
+    {
+        $query = Movil::query();
+
+        if ($request->filled('vendedor_id')) {
+            $query->where('vendedor_id', $request->vendedor_id);
+        }
+
+        if ($request->filled('sede_id')) {
+            $query->where('sede_id', $request->sede_id);
+        }
+
+        if ($request->filled('coordinador_id')) {
+            $query->whereHas('sede', function ($q) use ($request) {
+                $q->where('coordinador_id', $request->coordinador_id);
+            });
+        }
+
+        if ($request->boolean('ventas_pyme')) {
+            $query->where('tipo_producto', 'pyme');
+        }
+
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $startDate = Carbon::parse($request->input('start_date'))->startOfDay();
+            $endDate = Carbon::parse($request->input('end_date'))->endOfDay();
+            $query->whereBetween('updated_at', [$startDate, $endDate]);
+        }
+
+        $totalMoviles = $query->count();
+        $totalPendientes = $query->where('estado', 'pendiente')->count();
+        $totalActivos = $query->where('estado', 'activo')->count();
+        $totalInactivos = $query->where('estado', 'inactivo')->count();
+
+        return response()->json([
+            'total_moviles' => $totalMoviles,
+            'total_pendientes' => $totalPendientes,
+            'total_activos' => $totalActivos,
+            'total_inactivos' => $totalInactivos,
+        ]);
+    }
 }

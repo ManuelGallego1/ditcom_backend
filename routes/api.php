@@ -13,6 +13,7 @@ use App\Http\Controllers\api\FijoController;
 use App\Http\Controllers\api\MovilController;
 use App\Http\Controllers\api\GrupoController;
 use App\Http\Controllers\api\MensajeController;
+use App\Http\Controllers\api\EstadisticasController;
 
 Route::post('/login', [loginController::class, 'login']);
 //Route::post('/register', [UserController::class, 'store']);
@@ -33,6 +34,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/marcas', [CelularController::class, 'getAllMarcas']);
     Route::get('/modelos/{marca}', [CelularController::class, 'getModelosByMarca']);
 
+    Route::prefix('estadisticas')->group(function () {
+        Route::get('/', [EstadisticasController::class, 'getStatistics']);
+        Route::get('/fijos', [EstadisticasController::class, 'getFijosStatistics']);
+        Route::get('/moviles', [EstadisticasController::class, 'getMovilesStatistics']);
+        Route::get('/ventas-mes-actual', [EstadisticasController::class, 'VentasPorMesAnioActual']);
+        Route::get('/mejor-vendedor', [EstadisticasController::class, 'MejorVendedorGeneral']);
+    });
+
+
     Route::resource('users', UserController::class)->only(['index', 'show', 'update']);
     Route::resource('clientes', ClienteController::class)->only(['index', 'show', 'update', 'store']);
     Route::resource('sedes', SedeController::class)->only(['index', 'show']);
@@ -48,7 +58,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/grupos/{grupoId}/mensajes', [MensajeController::class, 'index']);
     Route::post('/grupos/{grupoId}/mensajes', [MensajeController::class, 'store']);
     Route::get('/grupos/{grupoId}/mensajes/{mensajeId}', [MensajeController::class, 'show']);
-    
+
     Route::get('/export/moviles', [MovilController::class, 'export'])->name('moviles.export');
     Route::get('/export/fijos', [FijoController::class, 'export'])->name('fijos.export');
 });
