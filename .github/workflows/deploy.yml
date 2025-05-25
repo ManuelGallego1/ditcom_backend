@@ -1,0 +1,29 @@
+name: Deploy Laravel to Hostinger
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p 65002 -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts || echo "ssh-keyscan failed"
+
+      - name: Deploy via rsync
+        run: |
+          rsync -avz -e "ssh -p 65002" --exclude=".git*" --exclude="node_modules" --exclude="vendor" ./ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/${{ secrets.USERNAME }}/domains/ditcombackend.amcdevcode.com
+
+      - name: Run post-deploy script
+        run: |
+          ssh -p 65002 ${{ secrets.USERNAME }}@${{ secrets.HOST }} "cd /home/${{ secrets.USERNAME }}/domains/ditcombackend.amcdevcode.com/public_html && bash deploy.sh"
