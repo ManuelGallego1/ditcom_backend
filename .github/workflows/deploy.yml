@@ -18,12 +18,12 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -p 65002 -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts || echo "ssh-keyscan failed"
 
       - name: Deploy via rsync
         run: |
-          rsync -avz --exclude=".git*" --exclude="node_modules" --exclude="vendor" ./ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/${{ secrets.USERNAME }}/public_html
+          rsync -avz -e "ssh -p 65002" --exclude=".git*" --exclude="node_modules" --exclude="vendor" ./ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/home/${{ secrets.USERNAME }}/public_html
 
       - name: Run post-deploy script
         run: |
-          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "cd ~/public_html && bash deploy.sh"
+          ssh -p 65002 ${{ secrets.USERNAME }}@${{ secrets.HOST }} "cd ~/public_html && bash deploy.sh"
