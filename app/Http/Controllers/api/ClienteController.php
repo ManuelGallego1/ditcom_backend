@@ -20,9 +20,9 @@ class ClienteController extends Controller
         ]);
     }
 
-    public function show($id)
+    public function show($cc)
     {
-        $cliente = Cliente::find($id);
+        $cliente = Cliente::where('cc', $cc)->first();
         if ($cliente) {
             return response()->json([
                 'data' => $cliente,
