@@ -29,7 +29,7 @@ class ClienteController extends Controller
                 'status' => 200
             ]);
         } else {
-            return response()->json(['message' => 'Cliente not found'], 404);
+            return response()->json(['message' => 'Cliente not found', 'status' => 404], 404);
         }
     }
 
