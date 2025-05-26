@@ -46,7 +46,7 @@ class MovilController extends Controller
 
     public function show($id)
     {
-        $movil = Movil::find($id);
+        $movil = Movil::with(['vendedor', 'sede', 'sede.coordinador', 'cliente', 'plan', 'celular'])->find($id);
 
         if (!$movil) {
             return response()->json(['message' => 'Movil not found'], 404);
