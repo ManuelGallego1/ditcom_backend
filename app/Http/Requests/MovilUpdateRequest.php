@@ -35,6 +35,7 @@ class MovilUpdateRequest extends FormRequest
             'valor_recarga' => 'nullable',
             'valor_total' => 'nullable|numeric',
             'vendedor_id' => 'nullable|exists:users,id',
+            'estado' => 'nullable|string|in:digitado,reclamar,instalado,cancelado,razonado',
             'financiera' => 'nullable|in:crediminuto,celya,brilla,N/A',
         ];
     }

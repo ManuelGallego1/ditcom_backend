@@ -34,6 +34,7 @@ class FijoUpdateRequest extends FormRequest
             'cliente_cc' => 'nullable|string|exists:clientes,cc',
             'convergente' => 'nullable|string',
             'ciudad' => 'nullable|string',
+            'estado' => 'nullable|string|in:digitado,reclamar,instalado,cancelado,razonado',
             'vendedor_id' => 'nullable|exists:users,id',
         ];
     }
