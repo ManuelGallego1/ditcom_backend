@@ -65,6 +65,10 @@ class FijoController extends Controller
         $totalAdicionales = $request->total_adicionales == '0' ? null : $request->total_adicionales;
         $sedeVendedor = SedeVendedor::where('vendedor_id', $request->vendedor_id)->first();
 
+        if (!$sedeVendedor) {
+            return response()->json(['message' => 'El vendedor no tiene asociada ninguna sede', 'status' => 404], 400);
+        }
+
         $fijo = Fijo::create([
             'fecha_instalacion' => $request->fecha_instalacion,
             'fecha_legalizacion' => $request->fecha_legalizacion,
