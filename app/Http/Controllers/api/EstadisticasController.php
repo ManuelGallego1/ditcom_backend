@@ -113,6 +113,8 @@ class EstadisticasController extends Controller
         $ventasMoviles = [];
 
         $vendedorId = $request->input('vendedor_id');
+        $coordinadorId = $request->input('coordinador_id');
+        $ventasPyme = $request->boolean('ventas_pyme');
 
         for ($month = 1; $month <= 12; $month++) {
             $startOfMonth = Carbon::create($year, $month, 1)->startOfMonth();
@@ -124,6 +126,20 @@ class EstadisticasController extends Controller
             if ($vendedorId) {
                 $fijoQuery->where('vendedor_id', $vendedorId);
                 $movilQuery->where('vendedor_id', $vendedorId);
+            }
+
+            if ($coordinadorId) {
+                $fijoQuery->whereHas('sede', function ($q) use ($coordinadorId) {
+                    $q->where('coordinador_id', $coordinadorId);
+                });
+                $movilQuery->whereHas('sede', function ($q) use ($coordinadorId) {
+                    $q->where('coordinador_id', $coordinadorId);
+                });
+            }
+
+            if ($ventasPyme) {
+                $fijoQuery->where('tipo_producto', 'pyme');
+                $movilQuery->where('tipo_producto', 'pyme');
             }
 
             $ventasFijos[] = $fijoQuery->count();
