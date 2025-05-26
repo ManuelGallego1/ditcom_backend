@@ -16,7 +16,7 @@ class MovilController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Movil::with(['vendedor', 'sede', 'sede.coordinador', 'cliente', 'plan']);
+        $query = Movil::with(['vendedor', 'sede', 'sede.coordinador', 'cliente', 'plan', 'celular']);
     
         if ($request->filled('vendedor_id')) {
             $query->where('vendedor_id', $request->vendedor_id);
