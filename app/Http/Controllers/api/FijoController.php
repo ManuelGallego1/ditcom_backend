@@ -66,7 +66,7 @@ class FijoController extends Controller
         $sedeVendedor = SedeVendedor::where('vendedor_id', $request->vendedor_id)->first();
 
         if (!$sedeVendedor) {
-            return response()->json(['message' => 'El vendedor no tiene asociada ninguna sede', 'status' => 404], 400);
+            return response()->json(['message' => 'El vendedor no tiene asociada ninguna sede', 'status' => 400], 400);
         }
 
         $fijo = Fijo::create([
