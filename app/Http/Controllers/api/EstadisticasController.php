@@ -128,17 +128,12 @@ class EstadisticasController extends Controller
 
     public function MejorVendedorGeneral()
     {
-        $startOfLastWeek = Carbon::now()->subWeek()->startOfWeek();
-        $endOfLastWeek = Carbon::now()->subWeek()->endOfWeek();
-
-        $ventasFijo = Fijo::whereBetween('fecha_instalacion', [$startOfLastWeek, $endOfLastWeek])
-            ->select('vendedor_id', \DB::raw('count(*) as total'))
+        $ventasFijo = Fijo::select('vendedor_id', \DB::raw('count(*) as total'))
             ->groupBy('vendedor_id')
             ->get()
             ->keyBy('vendedor_id');
 
-        $ventasMovil = Movil::whereBetween('updated_at', [$startOfLastWeek, $endOfLastWeek])
-            ->select('vendedor_id', \DB::raw('count(*) as total'))
+        $ventasMovil = Movil::select('vendedor_id', \DB::raw('count(*) as total'))
             ->groupBy('vendedor_id')
             ->get()
             ->keyBy('vendedor_id');
