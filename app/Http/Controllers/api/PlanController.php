@@ -21,10 +21,18 @@ class PlanController extends Controller
         if ($request->has('codigo')) {
             $query->where('codigo', $request->codigo);
         }
-        
+
+        if ($request->boolean('no_pagination')) {
+            $planes = $query->get();
+            return response()->json([
+                'data' => $planes,
+                'status' => 200
+            ]);
+        }
+
         $perPage = $request->input('per_page', 30);
         $planes = $query->paginate($perPage);
-    
+
         return response()->json($planes, 200);
     }
 

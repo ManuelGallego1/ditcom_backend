@@ -23,9 +23,12 @@ class UserController extends Controller
             $query->where('role', $request->input('role'));
         }
     
-        if ($request->has('paginate') && $request->boolean('paginate') === false) {
+        if ($request->boolean('no_pagination')) {
             $users = $query->get();
-            return response()->json($users, 200);
+            return response()->json([
+                'data' => $users,
+                'status' => 200
+            ]);
         }
     
         $perPage = $request->input('per_page', 30);

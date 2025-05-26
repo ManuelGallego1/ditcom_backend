@@ -21,6 +21,14 @@ class SedeController extends Controller
         if ($request->filled('nombre')) {
             $query->where('nombre', 'like', '%' . $request->nombre . '%');
         }
+
+        if ($request->boolean('no_pagination')) {
+            $sedes = $query->get();
+            return response()->json([
+                'data' => $sedes,
+                'status' => 200
+            ]);
+        }
     
         $perPage = $request->input('per_page', 30);
         $sedes = $query->paginate($perPage);
