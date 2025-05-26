@@ -114,12 +114,12 @@ class FijoController extends Controller
         $fijo = Fijo::find($id);
 
         if (!$fijo) {
-            return response()->json(['message' => 'Fijo not found'], 404);
+            return response()->json(['message' => 'Fijo no encontrado'], 404);
         }
 
         $fijo->delete();
 
-        return response()->json(['message' => 'Fijo deleted successfully'], 200);
+        return response()->json(['message' => 'Fijo eliminado correctamente'], 200);
     }
 
     public function export(Request $request)
