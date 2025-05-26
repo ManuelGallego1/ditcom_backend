@@ -106,18 +106,28 @@ class EstadisticasController extends Controller
         return response()->json($stats, 200);
     }
 
-    public function VentasPorMesAnioActual()
+    public function VentasPorMesAnioActual(Request $request)
     {
         $year = Carbon::now()->year;
         $ventasFijos = [];
         $ventasMoviles = [];
 
+        $vendedorId = $request->input('vendedor_id');
+
         for ($month = 1; $month <= 12; $month++) {
             $startOfMonth = Carbon::create($year, $month, 1)->startOfMonth();
             $endOfMonth = Carbon::create($year, $month, 1)->endOfMonth();
 
-            $ventasFijos[] = Fijo::whereBetween('fecha_instalacion', [$startOfMonth, $endOfMonth])->count();
-            $ventasMoviles[] = Movil::whereBetween('updated_at', [$startOfMonth, $endOfMonth])->count();
+            $fijoQuery = Fijo::whereBetween('fecha_instalacion', [$startOfMonth, $endOfMonth]);
+            $movilQuery = Movil::whereBetween('updated_at', [$startOfMonth, $endOfMonth]);
+
+            if ($vendedorId) {
+                $fijoQuery->where('vendedor_id', $vendedorId);
+                $movilQuery->where('vendedor_id', $vendedorId);
+            }
+
+            $ventasFijos[] = $fijoQuery->count();
+            $ventasMoviles[] = $movilQuery->count();
         }
 
         return response()->json([
